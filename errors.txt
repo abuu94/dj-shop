@@ -1,0 +1,33 @@
+docker run --privileged -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.13.1-management
+docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:management
+docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:latest
+
+
+docker run --security-opt apparmor=unconfined -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.13.1-management
+dmesg | tail -20
+journalctl -xe
+
+
+This warning indicates that RabbitMQ is alerting you about a **deprecated feature** (`global_qos`). While it's still permitted in the current version, it will eventually be removed in a future update.
+
+### **How to Handle This Warning:**
+1. **If you need the feature now**, explicitly allow it in your RabbitMQ configuration file:
+   - Open or create your RabbitMQ config file (usually located at `/etc/rabbitmq/rabbitmq.conf` on Linux).
+   - Add this line:
+     ```ini
+     deprecated_features.permit.global_qos = true
+     ```
+   - Restart RabbitMQ:
+     ```sh
+     sudo systemctl restart rabbitmq-server
+     ```
+
+2. **If you want to test your system without this feature**, disable it:
+   ```ini
+   deprecated_features.permit.global_qos = false
+   ```
+   Then restart RabbitMQ again.
+
+3. **Prepare for the feature's eventual removal** by updating your code or configurations to avoid using `global_qos`, ensuring compatibility with future RabbitMQ versions.
+
+Let me know if you need help adjusting your RabbitMQ setup! 🚀
